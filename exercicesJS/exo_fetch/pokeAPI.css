@@ -1,0 +1,56 @@
+body{
+    background: radial-gradient(circle, rgba(244,116,6,1) 0%, rgba(229,18,1,1) 88%);
+}
+.pictures_container{
+    margin-top: 15vw !important;
+}
+.form{
+    padding: 10px 0;
+    padding-right: 15px;
+    border: 3px solid #FFBF00;
+    
+  }
+input[type="text"]{ 
+    outline: none;
+}
+input{
+    padding:0;
+    border-radius: 0;
+    border: none;
+    font-size: 20px;
+    color: #FFBF00;
+    background:none;
+    letter-spacing: 1px;
+    word-spacing: 10px;
+    padding-left: 5px;
+    font-family: 'Arvo', sans-serif;
+    padding: 0;
+    line-height: 25px;
+}
+.btn-primary-perso{
+    background-color: #2B5D9C!important;
+    color: white;
+}
+.hidden {
+    display: none;
+}
+.msg{
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #2b3a55;
+    width: fit-content;
+    height: fit-content;
+    top: 50%;
+    z-index: 10;
+    border: 10px solid #FFBF00;
+    box-shadow: 5px 5px 12px white;
+}
+    .msg p{
+        color: white;
+        margin: 1em;
+    }
+
+.pictures_container{
+    margin: auto 700px;
+}
+
