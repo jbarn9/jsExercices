@@ -16,7 +16,7 @@ searchInput.addEventListener("input", (e) => {
 // API CALL
 const apiDiv = document.querySelector(".apiContact");
 const contactApi = async () => {
-  await fetch("https://pokeapi.co/api/v2/pokemon/?limit=20&offset=500")
+  await fetch("https://pokeapi.co/api/v2/pokemon/")
     .then((dataJson) => dataJson.json())
     .then((data) => {
       data.results.forEach(async (dataResult, i) => {
@@ -57,11 +57,11 @@ class Pokemon {
 
   getAttacked(amount, opponent) {
     let newHealth = this.health - amount;
-    if (newHealth < 0) {
+    if (newHealth <= 0) {
       newHealth = 0;
       this.health = newHealth;
       this.gameOver = true;
-      return (this.msg = "GAME OVER " + this.name + " a perdu.");
+      return (this.msg = "GAME OVER <br>" + this.name + " a perdu.");
     }
     this.health = newHealth;
     return (this.msg = this.displayInfo(opponent));
@@ -75,61 +75,61 @@ class Pokemon {
   }
 
   displayInfo(player) {
-    return (
-      "Attaque de " +
-      player +
-      " : " +
-      this.name +
-      " possède encore " +
-      this.health +
-      " point(s) de vie."
-    );
+    return `<h3 class="text-center">Attaque de ${player}</h3> <br> ${this.name} possède encore ${this.health} point(s) de vie.`;
   }
 }
 
 //function attack
 let index = null;
 let msg = document.querySelector(".msg p");
-
+let gameover = null;
 function startAttack() {
+  gameover = false;
+  document.querySelector(".msg").classList.toggle("hidden");
   if (pokemonList.length == 2) {
-    document.querySelector(".msg").classList.toggle("hidden");
     let button = document.querySelector(".attack-button");
     let health_poke1 = document.querySelector(".health_" + pokemonList[0].name);
     let health_poke2 = document.querySelector(".health_" + pokemonList[1].name);
     button.classList.add("disabled");
+    // first attack from player's pokemon
     pokemonList[0].launchAttack(pokemonList[1], pokemonList[0]);
-    msg.textContent = `${pokemonList[1].msg}`;
-
+    msg.innerHTML = `${pokemonList[1].msg}`;
+    // Display health of pokemon AI
     health_poke2.innerText = "";
     health_poke2.innerText = "HP : " + pokemonList[1].health;
+    pokemonList.forEach((poke) => {
+      if (poke.gameOver) {
+        gameover = true;
+        document.querySelector(`.${poke.name} a`).click();
+        return;
+      }
+    });
     // AI attack after 4000 millisec
-    setTimeout(function () {
-      msg.textContent = "";
-      pokemonList[1].launchAttack(pokemonList[0]);
-      msg.textContent = `${pokemonList[0].msg}`;
-      // update health info
-      health_poke1.innerText = "";
-      health_poke1.innerText = "HP : " + pokemonList[0].health;
-
+    const IAttack = setTimeout(function () {
+      if (!gameover) {
+        msg.textContent = "";
+        pokemonList[1].launchAttack(pokemonList[0]);
+        msg.innerHTML = `${pokemonList[0].msg}`;
+        // update health info
+        health_poke1.innerText = "";
+        health_poke1.innerText = "HP : " + pokemonList[0].health;
+      }
+      pokemonList.forEach((poke) => {
+        if (poke.gameOver) {
+          gameover = true;
+          document.querySelector(`.${poke.name} a`).click();
+          clearTimeout(IAttack);
+          return;
+        }
+      });
       setTimeout(function () {
         msg.textContent = "";
         document.querySelector(".msg").classList.toggle("hidden");
         button.classList.toggle("disabled");
-        pokemonList.forEach((poke) => {
-          if (poke.gameOver) {
-            document.querySelector(`.${poke.name} a`).click();
-          }
-        });
       }, 2000);
     }, 4000);
   } else {
-    console.log("else");
-    msg.textContent = "Choisis un deuxième pokémon !";
-    setTimeout(function () {
-      msg.textContent = "";
-      document.querySelector(".msg").classList.toggle("hidden");
-    }, 2000);
+    msg.innerText = "Choisis un deuxième pokémon !";
   }
 }
 
@@ -152,11 +152,6 @@ async function selectPoke(pokename, id, hp, attack, defense) {
     pokemonList.push(new Pokemon(id, pokename, hp, attack, defense));
     // put color yellow in the background
     cardbody.style.backgroundColor = "#FFC900";
-    // if (i == 1 && pokemonList.length == 2) {
-    //   playerPicture
-    //     .querySelector(".pictures:nth-child(2)")
-    //     .classList.add("d-flex", "justify-content-end");
-    // }
     player = playerPicture.querySelector(".player" + id);
     // Change inside button text
     button.innerHTML = "Déselectionner";
